@@ -574,6 +574,13 @@ function addMsg(role,text){
   renderMessages();
 }
 
+function linkify(text){
+  // הפוך קישורים לכפתורים לחיצים
+  return text.replace(/(https?:\/\/[^\s]+)/g, (url)=>{
+    return `<a href="${url}" target="_blank" style="color:#c8892a;text-decoration:underline;word-break:break-all;">${url}</a>`;
+  });
+}
+
 function renderMessages(){
   const container=document.getElementById('messages');
   container.innerHTML='';
@@ -587,7 +594,11 @@ function renderMessages(){
     }
     const b=document.createElement('div');
     b.className='bubble '+(m.role==='user'?'user':'bot');
-    b.textContent=m.content;
+    if(m.role==='assistant'){
+      b.innerHTML=linkify(m.content.replace(/\n/g,'<br>'));
+    } else {
+      b.textContent=m.content;
+    }
     row.appendChild(b);
     container.appendChild(row);
   });
@@ -605,6 +616,16 @@ function renderMessages(){
   container.scrollTop=container.scrollHeight;
 }
 
+// פתיחה אוטומטית של טופס הזמנה
+function checkAutoOpen(text){
+  const reservationUrl='https://chananelrubinoff.github.io/Landwer/reservation.html';
+  const keywords=['הזמנת מקום','לשמור מקום','להזמין מקום','רוצה מקום','book','reservation'];
+  if(keywords.some(k=>text.includes(k))){
+    setTimeout(()=>window.open(reservationUrl,'_blank'),1500);
+  }
+}
+
+
 // first message
 addMsg('assistant','שלום! 👋 אני לנדי, הבוט של לנדוור אריאל.\nאשמח לעזור עם שעות, תפריט, הזמנת מקום, מגשי אירוח ועוד 😊');
 
@@ -615,6 +636,7 @@ async function sendMessage(text){
   input.value='';
   document.getElementById('suggestions').style.display='none';
   addMsg('user',txt);
+  checkAutoOpen(txt);
   loading=true;
   renderMessages();
   document.getElementById('send-btn').disabled=true;
@@ -655,7 +677,7 @@ async function sendMessage(text){
 }
 
 function getApiKey(){
-  return localStorage.getItem('landwer_apikey')||'';
+  return localStorage.getItem('landwer_apikey')||'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';
 }
 
 function handleKey(e){if(e.key==='Enter')sendMessage();}
