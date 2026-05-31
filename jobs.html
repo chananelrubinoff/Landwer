@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>הצטרפו לצוות לנדוור אריאל</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Heebo',sans-serif;background:#f5ede0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;overflow:hidden}
+  .header{background:#2c1a0e;padding:24px;text-align:center;border-bottom:3px solid #c8892a}
+  .logo{font-size:28px;font-weight:700;color:#c8892a;font-family:Georgia,serif}
+  .subtitle{color:#f5ede0;font-size:14px;margin-top:6px}
+  .form{padding:28px 24px}
+  .form-title{font-size:18px;font-weight:700;color:#2c1a0e;margin-bottom:6px;text-align:center}
+  .form-sub{font-size:13px;color:#888;text-align:center;margin-bottom:22px}
+  .field{margin-bottom:18px}
+  label{display:block;font-size:13px;font-weight:600;color:#5a3a1a;margin-bottom:6px}
+  input,select,textarea{width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;transition:border-color .2s;direction:rtl}
+  input:focus,select:focus,textarea:focus{border-color:#c8892a}
+  textarea{resize:vertical;min-height:80px}
+  .submit-btn{width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:8px;transition:all .2s}
+  .submit-btn:hover{background:#c8892a}
+  .note{text-align:center;font-size:12px;color:#999;margin-top:10px}
+  .footer{text-align:center;padding:14px;color:#c0a080;font-size:12px;border-top:1px solid #f0e0cc}
+  .required{color:#c8892a}
+  .emoji-title{font-size:32px;display:block;text-align:center;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="logo">LANDWER</div>
+    <div class="subtitle">קפה לנדוור אריאל • מוריה 2, אריאל סנטר</div>
+  </div>
+
+  <div class="form">
+    <span class="emoji-title">👨‍🍳</span>
+    <div class="form-title">הצטרפו לצוות שלנו!</div>
+    <div class="form-sub">מלאו את הפרטים ונחזור אליכם בהקדם</div>
+
+    <div class="field">
+      <label>שם מלא <span class="required">*</span></label>
+      <input type="text" id="name" placeholder="ישראל ישראלי" required/>
+    </div>
+
+    <div class="field">
+      <label>טלפון <span class="required">*</span></label>
+      <input type="tel" id="phone" placeholder="050-0000000" dir="ltr" required/>
+    </div>
+
+    <div class="field">
+      <label>גיל <span class="required">*</span></label>
+      <input type="number" id="age" placeholder="18" min="16" max="70" required/>
+    </div>
+
+    <div class="field">
+      <label>תפקיד מבוקש <span class="required">*</span></label>
+      <select id="role" required>
+        <option value="">בחר תפקיד...</option>
+        <option value="מארח/ת">מארח/ת</option>
+        <option value="מלצר/ית">מלצר/ית</option>
+        <option value="ברמן/ית">ברמן/ית</option>
+        <option value="קופאי/ת">קופאי/ת</option>
+        <option value="טבח/ית">טבח/ית</option>
+        <option value="עוזר/ת מטבח">עוזר/ת מטבח</option>
+        <option value="אחר">אחר</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>ניסיון קודם</label>
+      <textarea id="experience" placeholder="ספרו לנו על ניסיון קודם בתחום (אם יש)..."></textarea>
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">שלח פרטים בוואטסאפ 📱</button>
+    <p class="note">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה ונחזור אליך בהקדם</p>
+  </div>
+
+  <div class="footer">לנדוור אריאל • 03-6174185 • א׳–ד׳ 08:30–22:30</div>
+</div>
+
+<script>
+function submitForm(){
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const age = document.getElementById('age').value.trim();
+  const role = document.getElementById('role').value;
+  const experience = document.getElementById('experience').value.trim();
+
+  if(!name || !phone || !age || !role){
+    alert('נא למלא את כל השדות החובה');
+    return;
+  }
+
+  const msg = `מועמד/ת חדש/ה 👨‍🍳%0A%0Aשם: ${name}%0Aטלפון: ${phone}%0Aגיל: ${age}%0Aתפקיד מבוקש: ${role}%0Aניסיון: ${experience||'אין'}`;
+  window.open(`https://wa.me/9720526670058?text=${msg}`, '_blank');
+}
+</script>
+</body>
+</html>
