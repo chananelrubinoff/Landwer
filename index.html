@@ -333,7 +333,7 @@ const ADMIN_PASSWORD = "Chan1907";
 
 let data = {
   hours:{sun:["08:30","22:30"],mon:["08:30","22:30"],tue:["08:30","22:30"],wed:["08:30","22:30"],thu:["08:30","22:45"],fri:["08:30","13:30"],sat:["21:15","23:15"],note:"שבת – שעה אחרי צאת שבת"},
-  contact:{address:"מוריה 2, אריאל סנטר, אריאל",phone:"03-6174185",insta:"@landwer_ariel",kosher:"כשר למהדרין – בהשגחת רבנות אריאל מהדרין",extra:"חניה זמינה בסביבת המקום. הסניף נגיש לכסאות גלגלים.\nמשלוחים: וולט | תן ביס"},
+  contact:{address:"מוריה 2, אריאל סנטר, אריאל",phone:"03-6174185",insta:"@landwer_ariel",kosher:"כשר למהדרין – בהשגחת רבנות אריאל מהדרין",extra:"חניה זמינה בסביבת המקום. הסניף נגיש לכסאות גלגלים.\nמשלוחים: https://orders.beecommcloud.com/#/sites/p-0/6059aa5f590031c244ecbc53"},
   delivery:{wolt:"https://wolt.com/he/isr/search/search?q=לנדוור",tenBis:"https://www.10bis.co.il/next/restaurants/group/44903/רשת-לנדוור-landwer"},
   menu:{
     brunch:[
@@ -507,7 +507,7 @@ function buildPrompt(){
 אינסטגרם: ${d.contact.insta}
 כשרות: ${d.contact.kosher}
 ${d.contact.extra}
-משלוחים: וולט – https://wolt.com/he/isr/search/search?q=לנדוור | תן ביס – https://www.10bis.co.il/next/restaurants/group/44903
+משלוחים: https://orders.beecommcloud.com/#/sites/p-0/6059aa5f590031c244ecbc53
 
 **שעות פתיחה:**
 ${hoursText}
@@ -558,6 +558,7 @@ ${d.calendar.msg}
 - חשוב מאוד: אל תשתמש בכוכביות (**) או כל סימני Markdown – כתוב טקסט רגיל בלבד, ללא עיצוב
 - כשמישהו שואל על קטגוריה ספציפית – תן 3-4 מנות מייצגות ושאל אם רוצה לשמוע עוד
 - כשמישהו שואל על מגשי אירוח – שלח את הקישור לתפריט: https://imgur.com/a/DWnlD6o ואמור שלהזמנה ליצור קשר עם הודיה במספר 0526670058
+- כשמישהו שואל על משלוח או איסוף עצמי – שלח קישור: https://orders.beecommcloud.com/#/sites/p-0/6059aa5f590031c244ecbc53
 - כשמישהו שואל על כשרות – ציין "כשר למהדרין בהשגחת רבנות אריאל מהדרין"
 - כשמישהו שואל על הזמנת מקום – ${d.calendar.link?'שלח קישור: '+d.calendar.link:'הפנה לטלפון '+d.contact.phone}
 - אם לא יודע משהו – אמור "כדאי לאמת עם הסניף ב-${d.contact.phone}"`;
