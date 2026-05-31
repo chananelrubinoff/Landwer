@@ -644,21 +644,10 @@ async function sendMessage(text){
 
   try{
     const key=getApiKey();
-    if(!key){
-      loading=false;
-      addMsg('assistant','❌ חסר API Key – כנס לניהול → פרטי קשר → הכנס את המפתח ושמור');
-      document.getElementById('send-btn').disabled=false;
-      return;
-    }
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://landwer-bot.chananel-rubinoff.workers.dev',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':key,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:buildPrompt(),messages:messages.filter(m=>m.role!=='system')})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5',max_tokens:600,system:buildPrompt(),messages:messages.filter(m=>m.role!=='system')})
     });
     const d=await res.json();
     if(d.error){
@@ -678,7 +667,7 @@ async function sendMessage(text){
 }
 
 function getApiKey(){
-  return localStorage.getItem('landwer_apikey')||'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';
+  return localStorage.getItem('landwer_apikey')||'';
 }
 
 function handleKey(e){if(e.key==='Enter')sendMessage();}
