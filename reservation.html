@@ -83,7 +83,8 @@
       <textarea id="notes" placeholder="לדוגמה: אלרגיה לגלוטן, יום הולדת..."></textarea>
     </div>
 
-    <button class="submit-btn" onclick="submitForm()">שלח הזמנה ✓</button>
+    <button class="submit-btn" onclick="submitForm()">שלח הזמנה בוואטסאפ 📱</button>
+    <p style="text-align:center;font-size:12px;color:#999;margin-top:10px">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה לקבלת אישור מהסניף</p>
   </div>
 
   <div class="success" id="success-section">
@@ -101,6 +102,19 @@
 // שנה את הכתובת הזו לאימייל שלך כדי לקבל הזמנות
 const OWNER_EMAIL = ""; // הכנס כאן את האימייל שלך
 
+function isValidHour(date, time){
+  const d = new Date(date);
+  const day = d.getDay(); // 0=sun...6=sat
+  const [h,m] = time.split(':').map(Number);
+  const mins = h*60+m;
+  // שעות פתיחה פחות 20 דקות
+  if(day>=0&&day<=3) return mins>=510&&mins<=1330; // א-ד 08:30-22:10
+  if(day===4) return mins>=510&&mins<=1345;        // ה  08:30-22:25
+  if(day===5) return mins>=510&&mins<=790;         // ו  08:30-13:10
+  if(day===6) return mins>=1275&&mins<=1375;       // ש  21:15-22:55
+  return false;
+}
+
 function submitForm(){
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
@@ -114,22 +128,14 @@ function submitForm(){
     return;
   }
 
-  // שמירה ב-localStorage
-  const reservation = {name, phone, date, time, guests, notes, timestamp: new Date().toISOString()};
-  const existing = JSON.parse(localStorage.getItem('reservations') || '[]');
-  existing.push(reservation);
-  localStorage.setItem('reservations', JSON.stringify(existing));
+  if(!isValidHour(date, time)){
+    alert('הסניף סגור בשעה שבחרת 🕐\n\nשעות פעילות:\nא׳–ד׳: 08:30–22:30\nה׳: 08:30–22:45\nו׳: 08:30–13:30\nש׳: 21:15–23:15\n\nנא לבחור שעה אחרת.');
+    return;
+  }
 
-  // הצג הודעת הצלחה
-  document.getElementById('success-name').textContent = name;
-  document.getElementById('form-section').style.display = 'none';
-  document.getElementById('success-section').style.display = 'block';
-
-  // פתח WhatsApp לשליחת הודעה לסניף
+  // פתח WhatsApp ישירות
   const msg = `הזמנת מקום חדשה 🪑%0A%0Aשם: ${name}%0Aטלפון: ${phone}%0Aתאריך: ${date}%0Aשעה: ${time}%0Aסועדים: ${guests}%0Aהערות: ${notes||'אין'}`;
-  setTimeout(()=>{
-    window.open(`https://wa.me/9720526670058?text=${msg}`, '_blank');
-  }, 1000);
+  window.open(`https://wa.me/9720526670058?text=${msg}`, '_blank');
 }
 
 // הגדר תאריך מינימום להיום
