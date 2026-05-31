@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>לנדוור אריאל – צ'אט</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --espresso:#2c1a0e;
+    --gold:#c8892a;
+    --gold-light:#e8b96a;
+    --cream:#fdf8f2;
+    --cream2:#f5ede0;
+    --text:#2c1a0e;
+    --border:#e2cdb0;
+  }
+  body{font-family:'Heebo',sans-serif;background:var(--cream2);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:12px}
+  
+  /* CHAT */
+  #chat-app{width:100%;max-width:460px;height:92vh;max-height:720px;display:flex;flex-direction:column;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(44,26,14,0.15),0 4px 16px rgba(44,26,14,0.08);overflow:hidden}
+  
+  /* HEADER */
+  .chat-header{background:var(--espresso);padding:16px 20px;flex-shrink:0;border-bottom:3px solid var(--gold)}
+  .header-inner{display:flex;align-items:center;gap:13px}
+  .logo-circle{width:48px;height:48px;border-radius:12px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;font-family:Georgia,serif;flex-shrink:0;box-shadow:0 2px 10px rgba(200,137,42,0.4)}
+  .header-title{color:#f5ede0;font-weight:700;font-size:16px}
+  .header-sub{color:var(--gold-light);font-size:12px;margin-top:3px;display:flex;align-items:center;gap:5px}
+  .dot-green{width:7px;height:7px;border-radius:50%;background:#5cd85a;box-shadow:0 0 6px #5cd85a;display:inline-block}
+  .header-hours{margin-right:auto;text-align:left;color:rgba(245,237,224,0.4);font-size:10px;line-height:1.7}
+  .admin-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(245,237,224,0.6);padding:5px 10px;border-radius:8px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .2s}
+  .admin-btn:hover{background:rgba(255,255,255,0.2);color:#fff}
+
+  /* MESSAGES */
+  .messages{flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:10px;background:var(--cream)}
+  .messages::-webkit-scrollbar{width:4px}
+  .messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  
+  .msg-row{display:flex;align-items:flex-end;gap:8px}
+  .msg-row.user{justify-content:flex-start}
+  .msg-row.bot{justify-content:flex-end}
+  
+  .bot-avatar{width:28px;height:28px;border-radius:8px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;font-family:Georgia,serif;flex-shrink:0}
+  
+  .bubble{max-width:75%;padding:11px 15px;font-size:14px;line-height:1.6;word-break:break-word;white-space:pre-wrap}
+  .bubble.user{background:var(--espresso);color:#f5ede0;border-radius:18px 18px 4px 18px}
+  .bubble.bot{background:#fff;color:var(--text);border-radius:18px 18px 18px 4px;border:1px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+  
+  /* TYPING */
+  .typing-dots{display:flex;gap:4px;padding:13px 16px}
+  .typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:tdot 1.2s ease-in-out infinite}
+  .typing-dots span:nth-child(2){animation-delay:.2s}
+  .typing-dots span:nth-child(3){animation-delay:.4s}
+  @keyframes tdot{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+  
+  /* SUGGESTIONS */
+  .suggestions{padding:10px 12px 6px;display:flex;flex-wrap:wrap;gap:7px}
+  .sug-btn{background:#fff7ee;border:1px solid var(--gold);color:#7a4a18;border-radius:16px;padding:7px 13px;font-size:13px;cursor:pointer;transition:all .18s;font-family:inherit}
+  .sug-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+  
+  /* INPUT */
+  .input-area{padding:12px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
+  .input-row{display:flex;gap:8px;align-items:center}
+  .chat-input{flex:1;border:1.5px solid var(--border);border-radius:20px;padding:11px 16px;font-size:14px;font-family:inherit;outline:none;background:var(--cream);color:var(--text);transition:border-color .2s;direction:rtl}
+  .chat-input:focus{border-color:var(--gold)}
+  .send-btn{width:42px;height:42px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0;transition:all .2s;box-shadow:0 2px 10px rgba(200,137,42,0.35)}
+  .send-btn:disabled{background:var(--border);box-shadow:none;cursor:default}
+  .input-footer{color:#c0a080;font-size:11px;text-align:center;margin-top:7px}
+
+  /* ========== ADMIN ========== */
+  #admin-app{display:none;width:100%;max-width:560px;background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(44,26,14,0.15);overflow:hidden;max-height:95vh;flex-direction:column}
+  #admin-app.show{display:flex}
+  #chat-app.hide{display:none}
+  
+  .admin-header{background:var(--espresso);padding:16px 22px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:12px;flex-shrink:0}
+  .admin-header h1{color:#f5ede0;font-size:17px;font-weight:700;flex:1}
+  .back-btn{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:#f5ede0;padding:6px 14px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit}
+  .back-btn:hover{background:rgba(255,255,255,0.22)}
+  
+  /* LOGIN */
+  #admin-login{padding:40px 30px;text-align:center}
+  #admin-login h2{color:var(--espresso);margin-bottom:8px;font-size:20px}
+  #admin-login p{color:#888;font-size:14px;margin-bottom:28px}
+  .admin-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-size:15px;font-family:inherit;outline:none;text-align:center;direction:ltr;margin-bottom:14px;background:var(--cream)}
+  .admin-input:focus{border-color:var(--gold)}
+  .primary-btn{width:100%;background:var(--gold);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+  .primary-btn:hover{background:#b07820}
+  .err-msg{color:#c0392b;font-size:13px;margin-top:8px}
+  
+  /* ADMIN PANEL */
+  #admin-panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+  #admin-panel.show{display:flex}
+  
+  .admin-tabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;overflow-x:auto}
+  .tab{padding:13px 16px;font-size:13px;font-weight:500;color:#999;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s}
+  .tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .tab:hover{color:var(--espresso)}
+  
+  .admin-content{flex:1;overflow-y:auto;padding:22px}
+  .tab-pane{display:none}
+  .tab-pane.active{display:block}
+  
+  .field-group{margin-bottom:20px}
+  .field-label{font-size:13px;font-weight:600;color:var(--espresso);margin-bottom:7px;display:block}
+  .field-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:14px;font-family:inherit;outline:none;background:var(--cream);color:var(--text);transition:border-color .2s}
+  .field-input:focus{border-color:var(--gold)}
+  textarea.field-input{resize:vertical;min-height:90px;line-height:1.6}
+  
+  .hours-grid{display:grid;grid-template-columns:auto 1fr 1fr;gap:8px 12px;align-items:center}
+  .hours-grid .day-label{font-size:13px;color:#666;font-weight:500}
+  .hours-grid .field-input{font-size:13px;padding:8px 10px}
+  
+  .save-bar{padding:14px 22px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
+  .save-btn{width:100%;background:var(--espresso);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+  .save-btn:hover{background:#3d2510}
+  .save-ok{color:#27ae60;font-size:13px;text-align:center;margin-top:8px;display:none}
+
+  .section-title{font-size:15px;font-weight:700;color:var(--espresso);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  
+  .menu-item-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+  .menu-item-row .field-input{flex:1}
+  .menu-item-row .price-input{width:80px;flex-shrink:0}
+  .del-btn{width:32px;height:32px;border:none;background:#fee;color:#c0392b;border-radius:8px;cursor:pointer;font-size:16px;flex-shrink:0}
+  .add-item-btn{background:none;border:1.5px dashed var(--gold);color:var(--gold);border-radius:8px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;width:100%;margin-top:4px}
+  .add-item-btn:hover{background:#fff7ee}
+
+  .calendar-link-box{background:var(--cream);border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+  .calendar-link-box p{font-size:13px;color:#666;line-height:1.7;margin-bottom:12px}
+  .cal-steps{list-style:none;counter-reset:steps}
+  .cal-steps li{counter-increment:steps;font-size:13px;color:#555;padding:5px 0 5px 28px;position:relative}
+  .cal-steps li::before{content:counter(steps);position:absolute;right:0;top:5px;width:20px;height:20px;background:var(--gold);color:#fff;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
+
+  .tray-item{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+  .tray-item-title{display:flex;gap:8px;margin-bottom:8px}
+  .tray-item-title .field-input{flex:1}
+</style>
+</head>
+<body>
+
+<!-- ===== CHAT ===== -->
+<div id="chat-app">
+  <div class="chat-header">
+    <div class="header-inner">
+      <div class="logo-circle">L</div>
+      <div>
+        <div class="header-title">קפה לנדוור – אריאל</div>
+        <div class="header-sub"><span class="dot-green"></span> לנדי מחובר ומוכן לעזור</div>
+      </div>
+      <div class="header-hours" id="header-hours-display">
+        א׳–ד׳ 08:30–22:30<br>ה׳ עד 22:45 | ו׳ עד 13:30
+      </div>
+      <button class="admin-btn" onclick="showAdmin()">⚙️ ניהול</button>
+    </div>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="suggestions" id="suggestions">
+    <button class="sug-btn" onclick="sendSug(this)">מה שעות הפתיחה?</button>
+    <button class="sug-btn" onclick="sendSug(this)">מה יש בתפריט?</button>
+    <button class="sug-btn" onclick="sendSug(this)">אני רוצה לשמור מקום</button>
+    <button class="sug-btn" onclick="sendSug(this)">מגשי אירוח</button>
+    <button class="sug-btn" onclick="sendSug(this)">יש אוכל טבעוני?</button>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <input class="chat-input" id="chat-input" type="text" placeholder="כתוב שאלה..." onkeydown="handleKey(event)"/>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+    <div class="input-footer">לנדוור אריאל • מופעל על ידי Claude AI</div>
+  </div>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div id="admin-app">
+  <div class="admin-header">
+    <div class="logo-circle" style="width:36px;height:36px;font-size:16px">L</div>
+    <h1>פאנל ניהול – לנדוור אריאל</h1>
+    <button class="back-btn" onclick="showChat()">← חזרה לבוט</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="admin-login">
+    <h2>🔐 כניסת מנהל</h2>
+    <p>הכנס סיסמה כדי לערוך את פרטי הבוט</p>
+    <input class="admin-input" type="password" id="admin-pw" placeholder="סיסמה" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <button class="primary-btn" onclick="checkPw()">כניסה</button>
+    <div class="err-msg" id="pw-err"></div>
+  </div>
+
+  <!-- PANEL -->
+  <div id="admin-panel">
+    <div class="admin-tabs">
+      <button class="tab active" onclick="switchTab('hours',this)">⏰ שעות</button>
+      <button class="tab" onclick="switchTab('contact',this)">📞 פרטי קשר</button>
+      <button class="tab" onclick="switchTab('menu',this)">🍽️ תפריט</button>
+      <button class="tab" onclick="switchTab('trays',this)">🎉 מגשי אירוח</button>
+      <button class="tab" onclick="switchTab('calendar',this)">📅 הזמנת מקום</button>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- HOURS -->
+      <div class="tab-pane active" id="tab-hours">
+        <div class="section-title">שעות פתיחה</div>
+        <div class="hours-grid">
+          <span class="day-label">ראשון</span>
+          <input class="field-input" id="h-sun-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-sun-close" placeholder="22:30" value="22:30"/>
+          <span class="day-label">שני</span>
+          <input class="field-input" id="h-mon-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-mon-close" placeholder="22:30" value="22:30"/>
+          <span class="day-label">שלישי</span>
+          <input class="field-input" id="h-tue-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-tue-close" placeholder="22:30" value="22:30"/>
+          <span class="day-label">רביעי</span>
+          <input class="field-input" id="h-wed-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-wed-close" placeholder="22:30" value="22:30"/>
+          <span class="day-label">חמישי</span>
+          <input class="field-input" id="h-thu-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-thu-close" placeholder="22:45" value="22:45"/>
+          <span class="day-label">שישי</span>
+          <input class="field-input" id="h-fri-open" placeholder="08:30" value="08:30"/>
+          <input class="field-input" id="h-fri-close" placeholder="13:30" value="13:30"/>
+          <span class="day-label">שבת</span>
+          <input class="field-input" id="h-sat-open" placeholder="21:15" value="21:15"/>
+          <input class="field-input" id="h-sat-close" placeholder="23:15" value="23:15"/>
+        </div>
+        <div class="field-group" style="margin-top:18px">
+          <label class="field-label">הערת שעות (אופציונלי)</label>
+          <input class="field-input" id="h-note" placeholder="לדוגמה: שבת שעה אחרי צאת שבת" value="שבת – שעה אחרי צאת שבת"/>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="tab-pane" id="tab-contact">
+        <div class="section-title">פרטי קשר וכתובת</div>
+        <div class="field-group">
+          <label class="field-label">🔑 API Key (Anthropic)</label>
+          <input class="field-input" id="api-key-input" placeholder="sk-ant-..." dir="ltr" type="password"/>
+          <div style="font-size:12px;color:#999;margin-top:5px">המפתח נשמר רק בטלפון שלך ולא נשלח לשום מקום</div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">כתובת</label>
+          <input class="field-input" id="c-address" value="מוריה 2, אריאל סנטר, אריאל"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">טלפון</label>
+          <input class="field-input" id="c-phone" value="03-6174185" dir="ltr"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">אינסטגרם</label>
+          <input class="field-input" id="c-insta" value="@landwer_ariel" dir="ltr"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">כשרות</label>
+          <input class="field-input" id="c-kosher" value="כשר למהדרין"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">מידע נוסף (חניה, נגישות וכו׳)</label>
+          <textarea class="field-input" id="c-extra">חניה זמינה בסביבת המקום. הסניף נגיש לכסאות גלגלים.</textarea>
+        </div>
+      </div>
+
+      <!-- MENU -->
+      <div class="tab-pane" id="tab-menu">
+        <div class="section-title">תפריט בוקר</div>
+        <div id="menu-breakfast"></div>
+        <button class="add-item-btn" onclick="addMenuItem('breakfast')">+ הוסף מנה</button>
+
+        <div class="section-title" style="margin-top:24px">תפריט צהריים/ערב</div>
+        <div id="menu-lunch"></div>
+        <button class="add-item-btn" onclick="addMenuItem('lunch')">+ הוסף מנה</button>
+
+        <div class="section-title" style="margin-top:24px">משקאות</div>
+        <div id="menu-drinks"></div>
+        <button class="add-item-btn" onclick="addMenuItem('drinks')">+ הוסף משקה</button>
+      </div>
+
+      <!-- TRAYS -->
+      <div class="tab-pane" id="tab-trays">
+        <div class="section-title">מגשי אירוח</div>
+        <div id="trays-list"></div>
+        <button class="add-item-btn" onclick="addTray()">+ הוסף מגש</button>
+        <div class="field-group" style="margin-top:20px">
+          <label class="field-label">מידע כללי על אירועים</label>
+          <textarea class="field-input" id="events-info" rows="4">אנו מציעים שירותי קייטרינג ואירוח לאירועים פרטיים ועסקיים. לפרטים ותיאום – צרו קשר בטלפון 03-6174185.</textarea>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="tab-pane" id="tab-calendar">
+        <div class="section-title">הזמנת מקום</div>
+        <div class="calendar-link-box">
+          <p>כדי לאפשר ללקוחות להזמין מקום ישירות מהבוט, חבר את Google Calendar שלך:</p>
+          <ol class="cal-steps">
+            <li>כנס ל־<strong>calendar.google.com</strong></li>
+            <li>לחץ על שלוש הנקודות ליד הלוח השנה שלך → <strong>הגדרות ושיתוף</strong></li>
+            <li>גלול ל-<strong>"קבלת אירועים ממידע ציבורי"</strong> – העתק את הקישור</li>
+            <li>הדבק אותו כאן למטה</li>
+          </ol>
+        </div>
+        <div class="field-group">
+          <label class="field-label">קישור להזמנת מקום (Google Calendar / כל שירות אחר)</label>
+          <input class="field-input" id="cal-link" placeholder="https://calendar.google.com/..." dir="ltr"/>
+        </div>
+        <div class="field-group">
+          <label class="field-label">הודעת אישור ללקוח</label>
+          <textarea class="field-input" id="cal-msg" rows="3">להזמנת מקום לחצו על הקישור הבא. אישור יישלח אוטומטית לאימייל שלכם.</textarea>
+        </div>
+        <div class="field-group">
+          <label class="field-label">מדיניות הזמנות</label>
+          <textarea class="field-input" id="cal-policy" rows="3">ניתן לבטל הזמנה עד שעה לפני המועד. לאירועים גדולים מעל 10 איש – אנא צרו קשר טלפונית.</textarea>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+
+    <div class="save-bar">
+      <button class="save-btn" onclick="saveAll()">💾 שמור שינויים</button>
+      <div class="save-ok" id="save-ok">✅ נשמר בהצלחה!</div>
+    </div>
+  </div><!-- /admin-panel -->
+</div><!-- /admin-app -->
+
+<script>
+// ============================================================
+// DATA STORE
+// ============================================================
+const ADMIN_PASSWORD = "Chan1907";
+
+let data = {
+  hours:{sun:["08:30","22:30"],mon:["08:30","22:30"],tue:["08:30","22:30"],wed:["08:30","22:30"],thu:["08:30","22:45"],fri:["08:30","13:30"],sat:["21:15","23:15"],note:"שבת – שעה אחרי צאת שבת"},
+  contact:{address:"מוריה 2, אריאל סנטר, אריאל",phone:"03-6174185",insta:"@landwer_ariel",kosher:"כשר למהדרין – בהשגחת רבנות אריאל מהדרין",extra:"חניה זמינה בסביבת המקום. הסניף נגיש לכסאות גלגלים.\nמשלוחים: וולט | תן ביס"},
+  delivery:{wolt:"https://wolt.com/he/isr/search/search?q=לנדוור",tenBis:"https://www.10bis.co.il/next/restaurants/group/44903/רשת-לנדוור-landwer"},
+  menu:{
+    brunch:[
+      {n:"כריך פוקצ'ה חביתה – פוקצ'ה חמימה מקופלת עם גבינת שמנת (או גבינה), חסה, מלפפון חמוץ ועגבנייה עם מלח ים",p:"54"},
+      {n:"כריך פוקצ'ה חביתת עדשים ותרד – פוקצ'ה חמימה עם ממרח עגבניות מיובשות, גבינות, חסה ועגבנייה",p:"54"},
+      {n:"כריך פוקצ'ה סלמון מעושן – גבינת שמנת וסלמון מעושן נחים על פוקצ'ה חמימה עם עגבניות שרי, בצל ירוק ושמיר. מוגש בצד עם סלט ירוק",p:"63"},
+      {n:"הצ'יזי מקושקשת – לחמנייה בריוש רכה עם חמאה, מפוצצת במקושקשת צ'דר, מוצרלה ובצל ירוק. בצד סלט ירוק בוויניגרט פרובנס",p:"56"},
+      {n:"יאסו! מקושקשת! – לחמנייה בריוש רכה עם פסטו, מפוצצת במקושקשת צ'דר, בולגרית, מוצרלה ותרד. בצד סלט ירוק בוויניגרט פרובנס",p:"59"},
+      {n:"צ'יזי פטריות ובצל מקורמל – לחמנייה בריוש רכה עם חמאה, מפוצצת במקושקשת פטריות, בצל מקורמל, מוצרלה ורוקט. בצד סלט ירוק בוויניגרט פרובנס",p:"59"}
+    ],
+    pastries:[
+      {n:"מאפה קינמון",p:"18"},
+      {n:"3 בורקיטס",p:"18"}
+    ],
+    snacks:[
+      {n:"ארנצ'יני – כדורי ריזוטו ממולאים במוצרלה וריקוטה, מצופים ומטוגנים לפריכות. מוגשים על רוטב עגבניות חמים וסלסה ורדה",p:"52"},
+      {n:"אני חולם על חלומי – אצבעות שמנמנות של גבינת חלומי, מצופות בפנקו ומטוגנות לפריכות. מוגשות עם איולי פסטו",p:"52"},
+      {n:"פרחי כרוביט זהובים – כרוביות מצופות ומטוגנות לפריכות. מוגשות עם איולי אריסה, לימון כבוש, רוקט ובצל סגול",p:"49"},
+      {n:"טאבולה ראסה – סלט בורגול עשיר בעשבי תבלין, גבינייה, מלפפון, שקדים ואגוזי מלך קלויים. נח על לאבנה דרוזית עם שמן זיתים",p:"39"},
+      {n:"לביבות בטטה ופטה – מוגשות עם לאבנה-שמנת בפסטו אגוזי וירקות טריים לנשנוש",p:"59"},
+      {n:"לחם שום איטלקי – עם חמאת שום, אורגנו ומלח ים",p:"19"},
+      {n:"פוקצ'ה עבודת יד – אפויה על משטח לוהט. מוגשת עם מטבל עגבניות טריות ועשבי תבלין וטחינה עם סלסה ורדה",p:"33"},
+      {n:"פוקצ'ה סלוניקי – פוקצ'ה עבודת יד עם חציל קלוי, עגבניות שרי וגבינה בולגרית, נאפית על משטח לוהט עם פלפל חריף. מוגשת עם טחינה לבנה לטבילה",p:"49"},
+      {n:"רוזלך ירושלמי – גלגולי בצק בעבודת יד ממולאים בגבינת שמנת ולאבנה, בצל מקורמל, פרמז'ן, שמן זעתר וסומאק. אפויים על משטח לוהט ומוגשים עם מטבל עגבניות ועשבי תבלין",p:"45"},
+      {n:"קלצונה הבלקן – מאפה לוהט ממולא בתערובת גבינות מוצרלה, צהובה ובולגרית, עם ממרח עגבניות מיובשות, פלפלים קלויים, בצל סגול וזיתי קלמטה",p:"51"},
+      {n:"פיצה מרגריטה – רוטב עגבניות עשיר, מוצרלה ארטיזנאלה ובזיליקום",p:"69"}
+    ],
+    mains:[
+      {n:"קריספי פיש בורגר – שניצל שמנמן מפילה דג לבן, בלחמנייה רכה עם איולי בצל בסומק, איולי לימון כבוש ואריסה, רוקט ועגבנייה",p:"75"},
+      {n:"הממזר הטבעוני של לנדוור – קציצת ביונד (113 גרם) עם בצל צלוי, חסה, עגבנייה, מלפפון חמוץ, חרדל דיז'ון ואיולי בצל בסומק",p:"75"},
+      {n:"קלאב סלמון מעושן – שלוש פרוסות קלויות של לחם בריוש עם סלמון מעושן וגבינה צהובה, איולי חרדל דבש, עגבנייה, רוקט וטבסקו",p:"68"},
+      {n:"ביגל טוסט צהובה – גבינה צהובה, עגבנייה וחמאה. מוגש עם איולי פסטו וסלט ירוק",p:"58"},
+      {n:"ביגל טוסט בולגרי – גבינה צהובה, גבינה בולגרית, בצל סגול, זיתי קלמטה ושמן זעתר. מוגש עם איולי פסטו וסלט ירוק",p:"58"},
+      {n:"ביגל טוסט ירושלמי – גבינה צהובה, ביצה קשה, גבינות מיובשות וזעתר. מוגש עם סלט ירוק ואיולי פסטו",p:"58"},
+      {n:"פיש אנד צ'יפס – נתחי דג לבן מצופים בפירורי פנקו ומטוגנים לפריכות זהובה. מוגשים עם צ'יפס, איולי, אריסה ולימון כבוש",p:"79"},
+      {n:"סלמון וסלט רענן – פילה סלמון צרוב עם סלט עשיר של עגבניות שרי, פלפלים קלויים, זיתי קלמטה, רוקט, בצל סגול וצנוניות",p:"102"},
+      {n:"סלמון הולנדייז וירוקים – פילה סלמון צרוב על העור עם ירוקים מוקפצים בשמן זית, שום ולימון. ברוטב הולנדייז חרדל עם טימין ופלפל",p:"112"},
+      {n:"כוסמת 2.0 (טבעוני) – תבשיל עשיר של כוסמת ובורגול מוקפצים עם טופו, פטריות, גזר, בצל צלוי, זוקיני, תרד, שעועית עדינה וטחינה",p:"69"}
+    ],
+    pasta:[
+      {n:"פסטה נפוליטנה – רוטב עגבניות איטלקי עם בזיליקום טרי ושלג פרמז'ן",p:"62"},
+      {n:"פסטה רוזה – רוטב עגבניות איטלקי עם שמנת, בזיליקום טרי ושלג פרמז'ן",p:"69"},
+      {n:"פסטה אלפרדו פטריות – רוטב אלפרדו עשיר, יין לבן, פטריות צלויות, בזיליקום טרי ושלג פרמז'ן",p:"74"},
+      {n:"רביולי בטטה וערמונים – כיסוני בצק פסטה עשיר בחלמונים, ממולאים בקרם בטטה. מוגשים ברוטב שמנת לבן עם ערמונים ותרד",p:"79"},
+      {n:"רביולי מסקרפונה – כיסוני בצק פסטה עשיר בחלמונים, ממולאים בקרם מסקרפונה עשיר. מוגשים ברוטב חמאת עגבניות",p:"79"}
+    ],
+    salads:[
+      {n:"סלט קיסר – עריסה של לבבות חסה, רוטב קיסר, קראמבל מלוח עם שקדים טוסטים, ביצה רכה ושלג פרמז'ן. מוגש עם לחמנייה חמימה",p:"62"},
+      {n:"סלט איקרים – קרעי מוצרלה פרסקה עם חסה קיסר ורוקט, עגבניות שרי, פלפלים קלויים, בצל סגול וצנוניות בוויניגרט בלסמי",p:"72"},
+      {n:"ים תיכון חדש – עגבניות, מלפפונים, פלפל, גזר, צנוניות ורוקט עם זיתי קלמטה וגבינה בולגרית. בתיבול שמן זעתר וסומאק",p:"72"},
+      {n:"ניסואז קלאסי – עגבניות, מלפפונים, צנוניות, חסה קיסר ורוקט עם ביצה רכה, קרעי תפוחי אדמה צלויים, אבוקדו (בעונה) ושעועית ירוקה",p:"72"},
+      {n:"סלט קריספי חלומי – דפי חלומי מטוגנים לפריכות, נחים על סלט עשיר של חסה קיסר, רוקט, עגבניות שרי, גזר, צנוניות ואבוקדו",p:"72"},
+      {n:"סלט קליפורניה סלמון – עריסה של חסה קיסר עם פלפלים קלויים, אבוקדו (בעונה), צנונית, בצל סגול ועגבניות שרי צלויות",p:"79"},
+      {n:"סלט קצוץ גדול – עגבנייה ומלפפון בוויניגרט תיכוני עם ביצה קשה, טחינה לבנה. מוגש עם לחם",p:"45"}
+    ],
+    sides:[
+      {n:"תוספת גדולה סלט ירוק",p:"31"},
+      {n:"תוספת גדולה צ'יפס",p:"31"},
+      {n:"תוספת גדולה ירוקים מוקפצים – בלימון, שום, שמן זית ושקדים קלויים",p:"31"},
+      {n:"תוספת גדולה פירה עם בצל מקורמל",p:"31"},
+      {n:"תוספת גדולה קרעי תפו\"א פריכים – מוגש עם איולי סלסה ורדה",p:"31"}
+    ],
+    sweets:[
+      {n:"עוגת שוקולד איטלקית – עוגת שוקולד עשירה ונימוחה ללא קמח, בציפוי שוקולד קרמי ושברי מרנג קקאו פריכים. מוגשת עם גלידת שמנת וניל",p:"51"},
+      {n:"ופל בלגי – ופל בלגי חמים עם כדורי גלידת שוקולד ושמנת וניל, קצפת אווירית, רוטב טופי עשיר וקרמבל שקדים",p:"51"},
+      {n:"גבינה קלאסית – עוגת גבינה אפויה עם קרמבל שקדים עשיר ורוטב פירות יער חמוץ",p:"51"},
+      {n:"טירמיסו – שכבות של בישקוטים ספוגים באספרסו עם קרם מסקרפונה. מוגש עם קאקאו ורוטב קפה שנמזג בשולחן",p:"51"},
+      {n:"פאי נחמת תפוחים – פאי בצק שקדים פריך עם מלית חמימה של תפוחי עץ בחמאה וקינמון. מוגש עם גלידת שמנת וניל",p:"51"},
+      {n:"הרוזלך של לנדוור – מאפי בצק שמרים חמים ופריכים, ממולאים בעבודת יד בממרח קרמל / ממרח אגוזי לוז ושוקולד. מוגש עם רוטב שוקולד לבן. תוספת פינוקים +8₪",p:"54"},
+      {n:"עוגת גזר – עוגת גזר בחושה עם אגוזים וקינמון",p:"22"},
+      {n:"קרואנץ' שמרים – סלייס מפנק של עוגת שמרים עם מלית עשירה של שוקולד חלב",p:"29"}
+    ],
+    kids:[
+      {n:"ארוחת ילדים (47₪) – כוללת שוקו הפתעות או מיץ לבחירה וירקות טריים חתוכים",p:"47"},
+      {n:"בוקר קטנטנים – ביצה לבחירה, גבינת שמנת, טחינה, ריבה, פרי עונה וטוסטונים",p:""},
+      {n:"טוסט ילדים – לחם בריוש עם גבינה צהובה",p:""},
+      {n:"פיצה ילדים – רוטב עגבניות ומוצרלה ארטיזנאלה (יש גרסה ללא גלוטן!)",p:""},
+      {n:"פסטה ילדים – פסטה רדיאטורה עם רוטב עגבניות / רוזה / שמנת",p:""},
+      {n:"שניצלוני דג ילדים – רצועות דג בציפוי פריך, מוגשים עם צ'יפס, קטשופ ומיונז",p:""},
+      {n:"תוספות: שוקו הפתעות 12₪ | מיץ 8₪ | גלידה 8₪",p:""}
+    ],
+    drinks:[
+      {n:"אספרסו קצר / כפול",p:"11/13"},
+      {n:"קפוצ'ינו",p:"15/18"},
+      {n:"אמריקנו",p:"14/16"},
+      {n:"קורטדו",p:"15"},
+      {n:"קפה שחור אורינגל",p:"12"},
+      {n:"קפה קר",p:"19/22"},
+      {n:"אמריקנו על קרח",p:"14/16"},
+      {n:"איס קפה",p:"21/24"},
+      {n:"שוקו קר",p:"15"},
+      {n:"תה / תה נענע",p:"15"},
+      {n:"תה בריאות",p:"18"},
+      {n:"חליטות תה – ארל גריי / פירות יער / תה ירוק עם ג'ינג'ר",p:"18"},
+      {n:"מאצ'ה לאטה",p:"24"},
+      {n:"שוקו / שוקו פרלינס",p:"18/24"},
+      {n:"סיידר חם",p:"19"},
+      {n:"וניל אייסלי",p:"24"},
+      {n:"סחלב",p:""},
+      {n:"סודה",p:"14"},
+      {n:"מינרלים",p:"14"},
+      {n:"אייס טי",p:"15"},
+      {n:"מוחיטו",p:"15"},
+      {n:"תפוזים / לימונדה",p:"20/17"},
+      {n:"גזר / תפוח / קרמבר (קר/חם)",p:"23/20"},
+      {n:"מיקס הבית – תפוח, סלרי וג'ינג'ר",p:"24/21"},
+      {n:"סוביניון בלאן לבן",p:"37 כוס / 136 בקבוק"},
+      {n:"רוזה",p:"37 כוס / 136 בקבוק"},
+      {n:"וינה אוסטרית אדום",p:"36 כוס / 132 בקבוק"},
+      {n:"סנגריה קרה/חמה",p:"32"},
+      {n:"קוקטייל הבית",p:"44"},
+      {n:"בירה מהברז – כוס 330מל / גדול",p:"28-35 / 29-32"}
+    ]
+  },
+  trays:[
+    {name:"מגש כריכוני ביס – לחמניית מזונות",desc:"15 יחידות",price:"189"},
+    {name:"מיני מגש בוריקיטס גבינות מלוחות",desc:"16 יחידות",price:"108"},
+    {name:"מיני מגש בוריקיטס סביח",desc:"16 יחידות",price:"148"},
+    {name:"מגש חצאי טורטיות",desc:"12 יחידות",price:"102"},
+    {name:"מגש אנטיפסטי",desc:"",price:"149"},
+    {name:"מגש מיני מאפים מלוחים / מתוקים",desc:"23 יחידות",price:"150"},
+    {name:"מגש מיני קרואסון חמאה עם סלמון מעושן / חביתה מקושקשת",desc:"15 יחידות",price:"150"},
+    {name:"קיש – בטטה / פטריות / ברוקולי / גבינות וזיתים",desc:"גדול / קטן",price:"140/82"},
+    {name:"סלטים – איקרים / ים תיכוני / פסטה / טאבולה ראסה / קיסר / ניסואז",desc:"",price:"110"},
+    {name:"לזניה – קלאסי / שמנת פטריות / חצילים ברוטב עגבניות ותרד",desc:"",price:"200"},
+    {name:"מגש שקשוקה 6 ביצים",desc:"",price:"100"},
+    {name:"פוקאצ'ות אישיות + מטבלים",desc:"9 יחידות",price:"135"},
+    {name:"לביבות בטטה",desc:"20 יחידות",price:"150"},
+    {name:"מגש פסטה – רוטב עגבניות / שמנת ופטריות / רוזה",desc:"",price:"190"},
+    {name:"מגש גבינות",desc:"",price:"280"},
+    {name:"מגש ירקות",desc:"",price:"110"},
+    {name:"מגש פירות",desc:"",price:"150"},
+    {name:"מגש עוגיות מתוקות",desc:"",price:"160"},
+    {name:"מגש רוזלך מסיבה",desc:"",price:"204"},
+    {name:"פס עוגת גזר / קוקוס תפוז",desc:"",price:"62"}
+  ],
+  calendar:{link:"",msg:"להזמנת מקום לחצו על הקישור הבא. אישור יישלח אוטומטית לאימייל שלכם.",policy:"ניתן לבטל הזמנה עד שעה לפני המועד. לאירועים גדולים מעל 10 איש – אנא צרו קשר טלפונית."},
+  eventsInfo:"מגשי אירוח לנדוור – מושלם לאירועים עסקיים, מסיבות ומפגשים. לתפריט המלא של מגשי האירוח: https://imgur.com/a/DWnlD6o | לפרטים והזמנה: הודיה 0526670058"
+};
+
+// load from localStorage if exists
+try{const s=localStorage.getItem('landwer_data');if(s)data=JSON.parse(s);}catch(e){}
+
+function saveData(){try{localStorage.setItem('landwer_data',JSON.stringify(data));}catch(e){}}
+
+// ============================================================
+// BUILD SYSTEM PROMPT FROM DATA
+// ============================================================
+function buildPrompt(){
+  const d=data;
+  const h=d.hours;
+  const hoursText=`ראשון: ${h.sun[0]}–${h.sun[1]}\nשני: ${h.mon[0]}–${h.mon[1]}\nשלישי: ${h.tue[0]}–${h.tue[1]}\nרביעי: ${h.wed[0]}–${h.wed[1]}\nחמישי: ${h.thu[0]}–${h.thu[1]}\nשישי: ${h.fri[0]}–${h.fri[1]}\nשבת: ${h.sat[0]}–${h.sat[1]}\nהערה: ${h.note}`;
+  const menuBrunch=(d.menu.brunch||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuPastries=(d.menu.pastries||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuSnacks=(d.menu.snacks||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuMains=(d.menu.mains||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuPasta=(d.menu.pasta||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuSalads=(d.menu.salads||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuSides=(d.menu.sides||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuKids=(d.menu.kids||[]).map(i=>`- ${i.n}${i.p?' '+i.p+'₪':''}`).join('\n');
+  const menuSweets=(d.menu.sweets||[]).map(i=>`- ${i.n} ${i.p}₪`).join('\n');
+  const menuDrinks=(d.menu.drinks||[]).map(i=>`- ${i.n}${i.p?' '+i.p+'₪':''}`).join('\n');
+  const traysText=d.trays.map(t=>`${t.name}${t.price?' ('+t.price+'₪)':''}: ${t.desc}`).join('\n');
+  const calLink=d.calendar.link?`קישור להזמנה: ${d.calendar.link}`:'הזמנת מקום – נא להתקשר ל-'+d.contact.phone;
+
+  return `אתה "לנדי" – הבוט הרשמי של קפה לנדוור סניף אריאל. אתה עונה במקום הטלפון.
+
+**פרטי הסניף:**
+כתובת: ${d.contact.address}
+טלפון: ${d.contact.phone}
+אינסטגרם: ${d.contact.insta}
+כשרות: ${d.contact.kosher}
+${d.contact.extra}
+משלוחים: וולט – https://wolt.com/he/isr/search/search?q=לנדוור | תן ביס – https://www.10bis.co.il/next/restaurants/group/44903
+
+**שעות פתיחה:**
+${hoursText}
+
+**כל היום בראנץ' (כריכי פוקצ'ה וסיי ביז'יו):**
+${menuBrunch}
+
+**מאפים:**
+${menuPastries}
+
+**מנות שכיף לנשנש:**
+${menuSnacks}
+
+**פסטה ורביולי:**
+${menuPasta}
+
+**מגיעים לעיקר (מנות עיקריות):**
+${menuMains}
+
+**סלטים:**
+${menuSalads}
+
+**תוספות:**
+${menuSides}
+
+**ארוחת ילדים:**
+${menuKids}
+
+**מתוקים:**
+${menuSweets}
+
+**שתייה:**
+${menuDrinks}
+
+**מגשי אירוח:**
+${traysText}
+${d.eventsInfo}
+
+**הזמנת מקום:**
+${calLink}
+מדיניות: ${d.calendar.policy}
+${d.calendar.msg}
+
+**הנחיות:**
+- ענה בעברית, חם וידידותי, עם אמוג'י במידה
+- היה תמציתי – אל תרשום את כל התפריט בבת אחת, אלא ענה על מה שנשאל
+- אל תשנה או תקצר שמות מנות – השתמש תמיד בשם המדויק כפי שמופיע בתפריט (לדוגמה: "ארנצ'יני" ולא "ארז'ני", "לביבות בטטה ופטה" ולא "לגניות")
+- חשוב מאוד: אל תשתמש בכוכביות (**) או כל סימני Markdown – כתוב טקסט רגיל בלבד, ללא עיצוב
+- כשמישהו שואל על קטגוריה ספציפית – תן 3-4 מנות מייצגות ושאל אם רוצה לשמוע עוד
+- כשמישהו שואל על מגשי אירוח – שלח את הקישור לתפריט: https://imgur.com/a/DWnlD6o ואמור שלהזמנה ליצור קשר עם הודיה במספר 0526670058
+- כשמישהו שואל על כשרות – ציין "כשר למהדרין בהשגחת רבנות אריאל מהדרין"
+- כשמישהו שואל על הזמנת מקום – ${d.calendar.link?'שלח קישור: '+d.calendar.link:'הפנה לטלפון '+d.contact.phone}
+- אם לא יודע משהו – אמור "כדאי לאמת עם הסניף ב-${d.contact.phone}"`;
+}
+
+// ============================================================
+// CHAT LOGIC
+// ============================================================
+let messages=[];
+let loading=false;
+
+function addMsg(role,text){
+  messages.push({role,content:text});
+  renderMessages();
+}
+
+function renderMessages(){
+  const container=document.getElementById('messages');
+  container.innerHTML='';
+  messages.forEach(m=>{
+    const row=document.createElement('div');
+    row.className='msg-row '+(m.role==='user'?'user':'bot');
+    if(m.role==='assistant'){
+      const av=document.createElement('div');
+      av.className='bot-avatar';av.textContent='L';
+      row.appendChild(av);
+    }
+    const b=document.createElement('div');
+    b.className='bubble '+(m.role==='user'?'user':'bot');
+    b.textContent=m.content;
+    row.appendChild(b);
+    container.appendChild(row);
+  });
+  if(loading){
+    const row=document.createElement('div');
+    row.className='msg-row bot';
+    const av=document.createElement('div');
+    av.className='bot-avatar';av.textContent='L';
+    const dots=document.createElement('div');
+    dots.className='bubble bot typing-dots';
+    dots.innerHTML='<span></span><span></span><span></span>';
+    row.appendChild(av);row.appendChild(dots);
+    container.appendChild(row);
+  }
+  container.scrollTop=container.scrollHeight;
+}
+
+// first message
+addMsg('assistant','שלום! 👋 אני לנדי, הבוט של לנדוור אריאל.\nאשמח לעזור עם שעות, תפריט, הזמנת מקום, מגשי אירוח ועוד 😊');
+
+async function sendMessage(text){
+  const input=document.getElementById('chat-input');
+  const txt=(text||input.value).trim();
+  if(!txt||loading)return;
+  input.value='';
+  document.getElementById('suggestions').style.display='none';
+  addMsg('user',txt);
+  loading=true;
+  renderMessages();
+  document.getElementById('send-btn').disabled=true;
+
+  try{
+    const key=getApiKey();
+    if(!key){
+      loading=false;
+      addMsg('assistant','❌ חסר API Key – כנס לניהול → פרטי קשר → הכנס את המפתח ושמור');
+      document.getElementById('send-btn').disabled=false;
+      return;
+    }
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':key,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:buildPrompt(),messages:messages.filter(m=>m.role!=='system')})
+    });
+    const d=await res.json();
+    if(d.error){
+      loading=false;
+      addMsg('assistant','שגיאה: '+d.error.message);
+      document.getElementById('send-btn').disabled=false;
+      return;
+    }
+    const reply=d.content?.[0]?.text||'סליחה, לא הצלחתי. נסה שוב.';
+    loading=false;
+    addMsg('assistant',reply);
+  }catch(e){
+    loading=false;
+    addMsg('assistant','אופס, בעיה טכנית. נסה שוב בעוד רגע ☕');
+  }
+  document.getElementById('send-btn').disabled=false;
+}
+
+function getApiKey(){
+  return localStorage.getItem('landwer_apikey')||'';
+}
+
+function handleKey(e){if(e.key==='Enter')sendMessage();}
+function sendSug(btn){sendMessage(btn.textContent);}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function showAdmin(){document.getElementById('chat-app').classList.add('hide');document.getElementById('admin-app').classList.add('show');}
+function showChat(){document.getElementById('admin-app').classList.remove('show');document.getElementById('chat-app').classList.remove('hide');}
+
+function checkPw(){
+  const pw=document.getElementById('admin-pw').value;
+  if(pw===ADMIN_PASSWORD){
+    document.getElementById('admin-login').style.display='none';
+    document.getElementById('admin-panel').classList.add('show');
+    loadAdminFields();
+    // ask for API key if not set
+    if(!getApiKey()){
+      setTimeout(()=>{
+        const k=prompt('הכנס את ה-API Key של Anthropic:');
+        if(k)localStorage.setItem('landwer_apikey',k.trim());
+      },300);
+    }
+  } else {
+    document.getElementById('pw-err').textContent='סיסמה שגויה';
+  }
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ---- LOAD ADMIN FIELDS ----
+function loadAdminFields(){
+  const d=data;
+  // hours
+  const days=['sun','mon','tue','wed','thu','fri','sat'];
+  const ids=['sun','mon','tue','wed','thu','fri','sat'];
+  days.forEach(day=>{
+    document.getElementById('h-'+day+'-open').value=d.hours[day][0];
+    document.getElementById('h-'+day+'-close').value=d.hours[day][1];
+  });
+  document.getElementById('h-note').value=d.hours.note;
+  // api key
+  const savedKey = getApiKey();
+  if(savedKey) document.getElementById('api-key-input').value = savedKey;
+  document.getElementById('c-phone').value=d.contact.phone;
+  document.getElementById('c-insta').value=d.contact.insta;
+  document.getElementById('c-kosher').value=d.contact.kosher;
+  document.getElementById('c-extra').value=d.contact.extra;
+  // menu
+  renderMenuItems();
+  // trays
+  renderTrays();
+  // calendar
+  document.getElementById('cal-link').value=d.calendar.link;
+  document.getElementById('cal-msg').value=d.calendar.msg;
+  document.getElementById('cal-policy').value=d.calendar.policy;
+  document.getElementById('events-info').value=d.eventsInfo;
+}
+
+// ---- MENU ----
+function renderMenuItems(){
+  ['breakfast','lunch','drinks'].forEach(cat=>{
+    const el=document.getElementById('menu-'+cat);
+    el.innerHTML='';
+    data.menu[cat].forEach((item,i)=>{
+      const row=document.createElement('div');
+      row.className='menu-item-row';
+      row.innerHTML=`<input class="field-input" value="${item.n}" onchange="data.menu['${cat}'][${i}].n=this.value" placeholder="שם המנה"/>
+        <input class="field-input price-input" value="${item.p}" onchange="data.menu['${cat}'][${i}].p=this.value" placeholder="מחיר" dir="ltr"/>
+        <button class="del-btn" onclick="delMenuItem('${cat}',${i})">✕</button>`;
+      el.appendChild(row);
+    });
+  });
+}
+function addMenuItem(cat){data.menu[cat].push({n:'',p:''});renderMenuItems();}
+function delMenuItem(cat,i){data.menu[cat].splice(i,1);renderMenuItems();}
+
+// ---- TRAYS ----
+function renderTrays(){
+  const el=document.getElementById('trays-list');
+  el.innerHTML='';
+  data.trays.forEach((t,i)=>{
+    const d2=document.createElement('div');
+    d2.className='tray-item';
+    d2.innerHTML=`<div class="tray-item-title">
+      <input class="field-input" value="${t.name}" onchange="data.trays[${i}].name=this.value" placeholder="שם המגש"/>
+      <input class="field-input price-input" value="${t.price}" onchange="data.trays[${i}].price=this.value" placeholder="מחיר" dir="ltr"/>
+      <button class="del-btn" onclick="delTray(${i})">✕</button>
+    </div>
+    <textarea class="field-input" rows="2" onchange="data.trays[${i}].desc=this.value" placeholder="תיאור המגש">${t.desc}</textarea>`;
+    el.appendChild(d2);
+  });
+}
+function addTray(){data.trays.push({name:'',desc:'',price:''});renderTrays();}
+function delTray(i){data.trays.splice(i,1);renderTrays();}
+
+// ---- SAVE ----
+function saveAll(){
+  const days=['sun','mon','tue','wed','thu','fri','sat'];
+  days.forEach(day=>{
+    data.hours[day][0]=document.getElementById('h-'+day+'-open').value;
+    data.hours[day][1]=document.getElementById('h-'+day+'-close').value;
+  });
+  data.hours.note=document.getElementById('h-note').value;
+  // save api key
+  const apiKeyVal=document.getElementById('api-key-input').value.trim();
+  if(apiKeyVal) localStorage.setItem('landwer_apikey',apiKeyVal);
+  data.contact.address=document.getElementById('c-address').value;
+  data.contact.phone=document.getElementById('c-phone').value;
+  data.contact.insta=document.getElementById('c-insta').value;
+  data.contact.kosher=document.getElementById('c-kosher').value;
+  data.contact.extra=document.getElementById('c-extra').value;
+  data.calendar.link=document.getElementById('cal-link').value;
+  data.calendar.msg=document.getElementById('cal-msg').value;
+  data.calendar.policy=document.getElementById('cal-policy').value;
+  data.eventsInfo=document.getElementById('events-info').value;
+  saveData();
+  // update header
+  updateHeaderHours();
+  const ok=document.getElementById('save-ok');
+  ok.style.display='block';
+  setTimeout(()=>ok.style.display='none',2500);
+}
+
+function updateHeaderHours(){
+  const h=data.hours;
+  document.getElementById('header-hours-display').innerHTML=
+    `א׳–ד׳ ${h.sun[0]}–${h.sun[1]}<br>ה׳ עד ${h.thu[1]} | ו׳ עד ${h.fri[1]}`;
+}
+</script>
+</body>
+</html>
