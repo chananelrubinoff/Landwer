@@ -585,8 +585,9 @@ function addMsg(role,text){
 }
 
 function linkify(text){
-  // הפוך קישורים לכפתורים לחיצים
-  return text.replace(/(https?:\/\/[^\s]+)/g, (url)=>{
+  return text.replace(/(https?:\/\/[^\s<>"'\u0590-\u05FF]+)/g, (url)=>{
+    // remove trailing punctuation
+    url = url.replace(/[.,!?;:)]+$/, '');
     return `<a href="${url}" target="_blank" style="color:#c8892a;text-decoration:underline;word-break:break-all;">${url}</a>`;
   });
 }
