@@ -471,7 +471,7 @@ let data = {
     {name:"פס עוגת גזר / קוקוס תפוז",desc:"",price:"62"}
   ],
   calendar:{link:"https://chananelrubinoff.github.io/Landwer/reservation.html",msg:"להזמנת מקום לחצו על הקישור הבא ומלאו את הפרטים. נחזור אליכם לאישור בהקדם 😊",policy:"ניתן לבטל הזמנה עד שעה לפני המועד. לאירועים גדולים מעל 10 איש – אנא צרו קשר טלפונית."},
-  eventsInfo:"מגשי אירוח לנדוור – מושלם לאירועים עסקיים, מסיבות ומפגשים. לתפריט המלא של מגשי האירוח: https://i.imgur.com/AZoNQL2.jpeg | לפרטים והזמנה: הודיה 0526670058"
+  eventsInfo:"מגשי אירוח לנדוור – מושלם לאירועים עסקיים, מסיבות ומפגשים. לתפריט המלא של מגשי האירוח: https://raw.githubusercontent.com/chananelrubinoff/Landwer/main/SAVE_20260601_093709.jpg | לפרטים והזמנה: הודיה 0526670058"
 };
 
 // load from localStorage if exists
@@ -561,8 +561,9 @@ ${d.calendar.msg}
 - כשמישהו שואל על קטגוריה ספציפית – תן 3-4 מנות מייצגות ושאל אם רוצה לשמוע עוד
 - כשמישהו שואל על אפשרויות טבעוניות – ציין: הממזר הטבעוני של לנדוור, כוסמת 2.0, פסטה נפוליטנה (ניתן לטבען), פיצה מרגריטה (ניתן לטבען), ברוסקטה דאבל אבוקדו (ניתן לטבען). בנוסף – רוב הסלטים ניתן לטבען עם גבינה טבעונית במקום. לפרטים נוספים – כדאי לאמת עם הסניף
 - כשמישהו שואל על עבודה / דרושים / גיוס – אמור "שמחים לשמוע! 😊 לחצו על הכפתור למטה למילוי פרטים" – הכפתור יופיע אוטומטית
+- כשמישהו רוצה להגיש תלונה, פידבק, בקשה מיוחדת, או לצור קשר – אמור "נשמח לשמוע! 😊 לחצו על הכפתור למטה ונחזור אליכם בהקדם" – הכפתור יופיע אוטומטית
 - כשמישהו שואל על ללא גלוטן – ציין: פסטה נפוליטנה ופסטה אלפרדו פטריות, פיצה מרגריטה, עוגת שוקולד איטלקית, כל הסלטים (מוגשים עם לחם ללא גלוטן לבקשה), פיצת ילדים
-- כשמישהו שואל על מגשי אירוח – שלח את הקישור לתמונת התפריט: https://i.imgur.com/AZoNQL2.jpeg ואמור שלהזמנה ליצור קשר עם הודיה במספר 0526670058
+- כשמישהו שואל על מגשי אירוח – שלח את הקישור לתמונת התפריט: https://raw.githubusercontent.com/chananelrubinoff/Landwer/main/SAVE_20260601_093709.jpg ואמור שלהזמנה ליצור קשר עם הודיה במספר 0526670058
 - כשמישהו שואל על משלוח או איסוף עצמי – שלח קישור: https://orders.beecommcloud.com/#/sites/p-0/6059aa5f590031c244ecbc53 וציין: "אם הקישור לא נפתח – העתק אותו והדבק בדפדפן"
 - כשמישהו שואל על כשרות – ציין "כשר למהדרין בהשגחת רבנות אריאל מהדרין"
 - כשמישהו שואל האם צריך להזמין מקום – ענה: "מומלץ להזמין מראש, אבל אפשר גם לבוא על בסיס מקום פנוי 😊 תרצו שאשלח לכם קישור להזמנה?"
@@ -618,6 +619,13 @@ function renderMessages(){
         btn.textContent='👨‍🍳 מלא פרטי מועמד';
         btn.style.cssText='display:block;margin-top:10px;background:#c8892a;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-family:inherit;cursor:pointer;width:100%;';
         btn.onclick=()=>openPage('jobs-page');
+        b.appendChild(btn);
+      }
+      if(txt.includes('תלונ') || txt.includes('פידבק') || txt.includes('בקשה') || txt.includes('צור קשר')){
+        const btn=document.createElement('button');
+        btn.textContent='💬 צור קשר';
+        btn.style.cssText='display:block;margin-top:10px;background:#c8892a;color:#fff;border:none;border-radius:10px;padding:10px 16px;font-size:14px;font-family:inherit;cursor:pointer;width:100%;';
+        btn.onclick=()=>openPage('contact-page');
         b.appendChild(btn);
       }
     } else {
@@ -827,60 +835,108 @@ function updateHeaderHours(){
     `א׳–ד׳ ${h.sun[0]}–${h.sun[1]}<br>ה׳ עד ${h.thu[1]} | ו׳ עד ${h.fri[1]}`;
 }
 </script>
-<!-- RESERVATION PAGE -->
-<div id="reservation-page" class="page-screen" style="display:none;background:#f5ede0;min-height:100vh;padding:16px;box-sizing:border-box;">
-  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;margin:0 auto 40px auto;overflow:hidden;">
-    <div style="background:#2c1a0e;padding:18px 20px;text-align:center;border-bottom:3px solid #c8892a;position:relative;">
+<!-- RESERVATION MODAL -->
+<div id="reservation-page" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(44,26,14,0.6);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;backdrop-filter:blur(4px);">
+  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.25);width:100%;max-width:480px;margin:0 auto 40px auto;overflow:hidden;position:relative;">
+    <div style="background:#2c1a0e;padding:18px 20px;text-align:center;border-bottom:3px solid #c8892a;position:sticky;top:0;z-index:10;">
       <div style="font-size:22px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
       <div style="color:#f5ede0;font-size:12px;margin-top:3px;">קפה לנדוור אריאל</div>
-      <button onclick="closePage('reservation-page')" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px;">← חזרה</button>
+      <button onclick="closePage('reservation-page')" style="position:absolute;top:50%;left:14px;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">✕ סגור</button>
     </div>
     <div style="padding:20px;">
-      <div style="text-align:center;font-size:26px;margin-bottom:6px;">🪑</div>
-      <div style="font-size:17px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">הזמנת מקום</div>
-      <div style="font-size:12px;color:#888;text-align:center;margin-bottom:18px;">מלאו את הפרטים ונאשר בוואטסאפ</div>
-      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שם מלא *</label><input id="r-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;-webkit-appearance:none;"></div>
-      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">טלפון *</label><input id="r-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;" dir="ltr"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">תאריך *</label><input id="r-date" type="date" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;"></div>
-        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שעה *</label><input id="r-time" type="time" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;"></div>
+      <div style="text-align:center;font-size:32px;margin-bottom:6px;">🪑</div>
+      <div style="font-size:18px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">הזמנת מקום</div>
+      <div style="font-size:12px;color:#888;text-align:center;margin-bottom:20px;">מלאו את הפרטים ונאשר בוואטסאפ</div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">שם מלא *</label><input id="r-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;-webkit-appearance:none;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">טלפון *</label><input id="r-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;-webkit-appearance:none;" dir="ltr"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">תאריך *</label><input id="r-date" type="date" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;-webkit-appearance:none;"></div>
+        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">שעה *</label><input id="r-time" type="time" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;-webkit-appearance:none;"></div>
       </div>
-      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">מספר סועדים *</label><select id="r-guests" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;-webkit-appearance:none;"><option value="">בחר...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option value="10+">10+ (נא להתקשר)</option></select></div>
-      <div style="margin-bottom:18px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">הערות</label><textarea id="r-notes" placeholder="אלרגיות, בקשות מיוחדות..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:none;height:80px;"></textarea></div>
-      <button onclick="submitReservation()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">שלח הזמנה בוואטסאפ 📱</button>
-      <p style="text-align:center;font-size:12px;color:#999;">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה לאישור</p>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">מספר סועדים *</label><select id="r-guests" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;-webkit-appearance:none;"><option value="">בחר...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option value="10+">10+ (נא להתקשר)</option></select></div>
+      <div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">הערות</label><textarea id="r-notes" placeholder="אלרגיות, בקשות מיוחדות..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:none;height:90px;box-sizing:border-box;"></textarea></div>
+      <button onclick="submitReservation()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(44,26,14,0.3);">שלח הזמנה בוואטסאפ 📱</button>
+      <p style="text-align:center;font-size:12px;color:#aaa;">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה לאישור</p>
     </div>
   </div>
 </div>
 
-<!-- JOBS PAGE -->
-<div id="jobs-page" class="page-screen" style="display:none;background:#f5ede0;min-height:100vh;padding:16px;box-sizing:border-box;">
-  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;margin:auto;overflow:hidden;">
-    <div style="background:#2c1a0e;padding:20px;text-align:center;border-bottom:3px solid #c8892a;position:relative;">
+<!-- JOBS MODAL -->
+<div id="jobs-page" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(44,26,14,0.6);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;backdrop-filter:blur(4px);">
+  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.25);width:100%;max-width:480px;margin:0 auto 40px auto;overflow:hidden;position:relative;">
+    <div style="background:#2c1a0e;padding:20px;text-align:center;border-bottom:3px solid #c8892a;position:sticky;top:0;z-index:10;">
       <div style="font-size:24px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
       <div style="color:#f5ede0;font-size:13px;margin-top:4px;">קפה לנדוור אריאל</div>
-      <button onclick="closePage('jobs-page')" style="position:absolute;top:16px;left:16px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;">← חזרה</button>
+      <button onclick="closePage('jobs-page')" style="position:absolute;top:50%;left:16px;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">✕ סגור</button>
     </div>
     <div style="padding:24px;">
-      <div style="text-align:center;font-size:28px;margin-bottom:8px;">👨‍🍳</div>
+      <div style="text-align:center;font-size:32px;margin-bottom:8px;">👨‍🍳</div>
       <div style="font-size:18px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">הצטרפו לצוות!</div>
-      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:20px;">מלאו את הפרטים ונחזור אליכם בהקדם</div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שם מלא *</label><input id="j-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">טלפון *</label><input id="j-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;" dir="ltr"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">גיל *</label><input id="j-age" type="number" placeholder="18" min="16" max="70" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">תפקיד מבוקש *</label><select id="j-role" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;"><option value="">בחר תפקיד...</option><option>מארח/ת</option><option>מלצר/ית</option><option>ברמן/ית</option><option>טבח/ית</option><option>עוזר/ת מטבח</option><option>אחר</option></select></div>
-      <div style="margin-bottom:18px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">ניסיון קודם</label><textarea id="j-exp" placeholder="ספרו לנו על ניסיון קודם..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:vertical;min-height:70px;"></textarea></div>
-      <button onclick="submitJob()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;">שלח פרטים בוואטסאפ 📱</button>
-      <p style="text-align:center;font-size:12px;color:#999;margin-top:8px;">לאחר הלחיצה יפתח וואטסאפ – נחזור אליך בהקדם</p>
+      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:22px;">מלאו את הפרטים ונחזור אליכם בהקדם</div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">שם מלא *</label><input id="j-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">טלפון *</label><input id="j-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;" dir="ltr"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">גיל *</label><input id="j-age" type="number" placeholder="18" min="16" max="70" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;"></div>
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">תפקיד מבוקש *</label><select id="j-role" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;-webkit-appearance:none;"><option value="">בחר תפקיד...</option><option>מארח/ת</option><option>מלצר/ית</option><option>ברמן/ית</option><option>טבח/ית</option><option>עוזר/ת מטבח</option><option>אחר</option></select></div>
+      <div style="margin-bottom:20px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">ניסיון קודם</label><textarea id="j-exp" placeholder="ספרו לנו על ניסיון קודם..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:vertical;min-height:80px;box-sizing:border-box;"></textarea></div>
+      <button onclick="submitJob()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(44,26,14,0.3);">שלח פרטים בוואטסאפ 📱</button>
+      <p style="text-align:center;font-size:12px;color:#aaa;margin-top:10px;">לאחר הלחיצה יפתח וואטסאפ – נחזור אליך בהקדם</p>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div id="contact-page" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(44,26,14,0.6);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;box-sizing:border-box;backdrop-filter:blur(4px);">
+  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.25);width:100%;max-width:480px;margin:0 auto 40px auto;overflow:hidden;position:relative;">
+    <div style="background:#2c1a0e;padding:18px 20px;text-align:center;border-bottom:3px solid #c8892a;position:sticky;top:0;z-index:10;">
+      <div style="font-size:22px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
+      <div style="color:#f5ede0;font-size:12px;margin-top:3px;">קפה לנדוור אריאל</div>
+      <button onclick="closePage('contact-page')" style="position:absolute;top:50%;left:14px;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;">✕ סגור</button>
+    </div>
+    <div style="padding:22px;">
+      <div style="text-align:center;font-size:32px;margin-bottom:6px;">💬</div>
+      <div style="font-size:18px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">צור קשר</div>
+      <div style="font-size:12px;color:#888;text-align:center;margin-bottom:20px;">תלונות, בקשות, פידבק – נשמח לשמוע</div>
+
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">שם מלא *</label><input id="ct-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;-webkit-appearance:none;"></div>
+
+      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">טלפון</label><input id="ct-phone" type="tel" placeholder="050-0000000 (אופציונלי)" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;box-sizing:border-box;-webkit-appearance:none;" dir="ltr"></div>
+
+      <div style="margin-bottom:14px;">
+        <label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">סוג פנייה *</label>
+        <select id="ct-type" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;box-sizing:border-box;-webkit-appearance:none;">
+          <option value="">בחר...</option>
+          <option>תלונה</option>
+          <option>בקשה מיוחדת</option>
+          <option>פידבק חיובי</option>
+          <option>שאלה כללית</option>
+          <option>אחר</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:22px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:6px;">הפנייה שלך *</label><textarea id="ct-msg" placeholder="כתבו כאן..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:13px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:none;height:110px;box-sizing:border-box;"></textarea></div>
+
+      <button onclick="submitContact()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:17px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 16px rgba(44,26,14,0.3);">שלח בוואטסאפ 📱</button>
+      <p style="text-align:center;font-size:12px;color:#aaa;">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה ונחזור אליך בהקדם</p>
     </div>
   </div>
 </div>
 
 <script>
-function openPage(id){
-  document.getElementById(id).style.display='flex';
-  document.getElementById(id).style.flexDirection='column';
-  document.getElementById(id).style.alignItems='center';
+function submitContact(){
+  const name=document.getElementById('ct-name').value.trim();
+  const phone=document.getElementById('ct-phone').value.trim();
+  const type=document.getElementById('ct-type').value;
+  const msg=document.getElementById('ct-msg').value.trim();
+  if(!name||!type||!msg){alert('נא למלא את כל שדות החובה');return;}
+  const text=`פנייה חדשה 💬%0A%0Aשם: ${name}%0Aטלפון: ${phone||'לא צוין'}%0Aסוג פנייה: ${type}%0A%0Aהודעה:%0A${encodeURIComponent(msg)}`;
+  window.open(`https://wa.me/9720526670058?text=${text}`,'_blank');
+}
+</script>
+  var el=document.getElementById(id);
+  el.style.display='block';
+  el.scrollTop=0;
+  document.body.style.overflow='hidden';
+  el.onclick=function(e){if(e.target===el)closePage(id);};
 }
 function closePage(id){
   document.getElementById(id).style.display='none';
