@@ -828,33 +828,33 @@ function updateHeaderHours(){
 }
 </script>
 <!-- RESERVATION PAGE -->
-<div id="reservation-page" style="display:none;position:fixed;inset:0;background:#f5ede0;z-index:1000;overflow-y:auto;padding:20px;display:none;align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;overflow:hidden;">
-    <div style="background:#2c1a0e;padding:20px;text-align:center;border-bottom:3px solid #c8892a;">
-      <div style="font-size:24px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
-      <div style="color:#f5ede0;font-size:13px;margin-top:4px;">קפה לנדוור אריאל</div>
-      <button onclick="closePage('reservation-page')" style="position:absolute;top:16px;left:16px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;">← חזרה</button>
+<div id="reservation-page" style="display:none;position:fixed;inset:0;background:#f5ede0;z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;">
+  <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;margin:0 auto 40px auto;overflow:hidden;">
+    <div style="background:#2c1a0e;padding:18px 20px;text-align:center;border-bottom:3px solid #c8892a;position:relative;">
+      <div style="font-size:22px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
+      <div style="color:#f5ede0;font-size:12px;margin-top:3px;">קפה לנדוור אריאל</div>
+      <button onclick="closePage('reservation-page')" style="position:absolute;top:14px;left:14px;background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:13px;">← חזרה</button>
     </div>
-    <div style="padding:24px;">
-      <div style="text-align:center;font-size:28px;margin-bottom:8px;">🪑</div>
-      <div style="font-size:18px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">הזמנת מקום</div>
-      <div style="font-size:13px;color:#888;text-align:center;margin-bottom:20px;">מלאו את הפרטים ונאשר בוואטסאפ</div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שם מלא *</label><input id="r-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;"></div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">טלפון *</label><input id="r-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;" dir="ltr"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">תאריך *</label><input id="r-date" type="date" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;"></div>
-        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שעה *</label><input id="r-time" type="time" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;"></div>
+    <div style="padding:20px;">
+      <div style="text-align:center;font-size:26px;margin-bottom:6px;">🪑</div>
+      <div style="font-size:17px;font-weight:700;color:#2c1a0e;text-align:center;margin-bottom:4px;">הזמנת מקום</div>
+      <div style="font-size:12px;color:#888;text-align:center;margin-bottom:18px;">מלאו את הפרטים ונאשר בוואטסאפ</div>
+      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שם מלא *</label><input id="r-name" type="text" placeholder="ישראל ישראלי" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;-webkit-appearance:none;"></div>
+      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">טלפון *</label><input id="r-phone" type="tel" placeholder="050-0000000" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;" dir="ltr"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">תאריך *</label><input id="r-date" type="date" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;"></div>
+        <div><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">שעה *</label><input id="r-time" type="time" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 10px;font-size:14px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;-webkit-appearance:none;"></div>
       </div>
-      <div style="margin-bottom:14px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">מספר סועדים *</label><select id="r-guests" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;"><option value="">בחר...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option value="10+">10+ (נא להתקשר)</option></select></div>
-      <div style="margin-bottom:18px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">הערות</label><textarea id="r-notes" placeholder="אלרגיות, בקשות מיוחדות..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:11px 14px;font-size:15px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:vertical;min-height:70px;"></textarea></div>
-      <button onclick="submitReservation()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;">שלח הזמנה בוואטסאפ 📱</button>
-      <p style="text-align:center;font-size:12px;color:#999;margin-top:8px;">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה לאישור</p>
+      <div style="margin-bottom:12px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">מספר סועדים *</label><select id="r-guests" style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;-webkit-appearance:none;"><option value="">בחר...</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option value="10+">10+ (נא להתקשר)</option></select></div>
+      <div style="margin-bottom:18px;"><label style="font-size:13px;font-weight:600;color:#5a3a1a;display:block;margin-bottom:5px;">הערות</label><textarea id="r-notes" placeholder="אלרגיות, בקשות מיוחדות..." style="width:100%;border:1.5px solid #e2cdb0;border-radius:10px;padding:12px 14px;font-size:16px;font-family:inherit;outline:none;background:#fdf8f2;color:#2c1a0e;direction:rtl;resize:none;height:80px;"></textarea></div>
+      <button onclick="submitReservation()" style="width:100%;background:#2c1a0e;color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:8px;">שלח הזמנה בוואטסאפ 📱</button>
+      <p style="text-align:center;font-size:12px;color:#999;">לאחר הלחיצה יפתח וואטסאפ – שלח את ההודעה לאישור</p>
     </div>
   </div>
 </div>
 
 <!-- JOBS PAGE -->
-<div id="jobs-page" style="display:none;position:fixed;inset:0;background:#f5ede0;z-index:1000;overflow-y:auto;padding:20px;">
+<div id="jobs-page" style="display:none;position:fixed;inset:0;background:#f5ede0;z-index:1000;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;">
   <div style="background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(44,26,14,0.12);width:100%;max-width:480px;margin:auto;overflow:hidden;">
     <div style="background:#2c1a0e;padding:20px;text-align:center;border-bottom:3px solid #c8892a;position:relative;">
       <div style="font-size:24px;font-weight:700;color:#c8892a;font-family:Georgia,serif;">LANDWER</div>
