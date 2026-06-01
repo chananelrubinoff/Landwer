@@ -922,16 +922,7 @@ function updateHeaderHours(){
 </div>
 
 <script>
-function submitContact(){
-  const name=document.getElementById('ct-name').value.trim();
-  const phone=document.getElementById('ct-phone').value.trim();
-  const type=document.getElementById('ct-type').value;
-  const msg=document.getElementById('ct-msg').value.trim();
-  if(!name||!type||!msg){alert('נא למלא את כל שדות החובה');return;}
-  const text=`פנייה חדשה 💬%0A%0Aשם: ${name}%0Aטלפון: ${phone||'לא צוין'}%0Aסוג פנייה: ${type}%0A%0Aהודעה:%0A${encodeURIComponent(msg)}`;
-  window.open(`https://wa.me/9720526670058?text=${text}`,'_blank');
-}
-</script>
+function openPage(id){
   var el=document.getElementById(id);
   el.style.display='block';
   el.scrollTop=0;
@@ -977,6 +968,16 @@ function submitJob(){
   if(!name||!phone||!age||!role){alert('נא למלא את כל השדות החובה');return;}
   const msg=`מועמד/ת חדש/ה 👨‍🍳%0A%0Aשם: ${name}%0Aטלפון: ${phone}%0Aגיל: ${age}%0Aתפקיד: ${role}%0Aניסיון: ${exp||'אין'}`;
   window.open(`https://wa.me/9720526670058?text=${msg}`,'_blank');
+}
+
+function submitContact(){
+  const name=document.getElementById('ct-name').value.trim();
+  const phone=document.getElementById('ct-phone').value.trim();
+  const type=document.getElementById('ct-type').value;
+  const msg=document.getElementById('ct-msg').value.trim();
+  if(!name||!type||!msg){alert('נא למלא את כל שדות החובה');return;}
+  const text=`פנייה חדשה 💬%0A%0Aשם: ${name}%0Aטלפון: ${phone||'לא צוין'}%0Aסוג פנייה: ${type}%0A%0Aהודעה:%0A${encodeURIComponent(msg)}`;
+  window.open(`https://wa.me/9720526670058?text=${text}`,'_blank');
 }
 </script>
 </body>
