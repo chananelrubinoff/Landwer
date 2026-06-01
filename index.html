@@ -606,7 +606,7 @@ function renderMessages(){
     const b=document.createElement('div');
     b.className='bubble '+(m.role==='user'?'user':'bot');
     if(m.role==='assistant'){
-      b.innerHTML=linkify(m.content.replace(/\n/g,'<br>'));
+      b.innerHTML=linkify(m.content).replace(/\n/g,'<br>');
       // הוסף כפתורי פעולה אם הבוט מדבר על הזמנה או גיוס
       const txt=m.content.toLowerCase();
       if(txt.includes('הזמנ') && (txt.includes('מקום') || txt.includes('קישור'))){
